@@ -12,7 +12,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace TodoListAPIs.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/mainList")]
     [ApiController]
     public class MainListController : ControllerBase
     {
@@ -45,7 +45,7 @@ namespace TodoListAPIs.Controllers
         }
 
         [SwaggerOperation(Summary = "Get all MainList")]
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<List<MainListData>>> GetMainList(Guid id)
         {
             try
@@ -67,7 +67,7 @@ namespace TodoListAPIs.Controllers
 
         [SwaggerOperation(Summary = "Create new MainList")]
         [HttpPost]
-        public async Task<ActionResult<MainListData>> PostItem(MainListData MainListData)
+        public async Task<ActionResult<MainListData>> PostMainList(MainListData MainListData)
         {
             try
             {

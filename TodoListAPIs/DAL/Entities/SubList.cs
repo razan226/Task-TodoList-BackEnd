@@ -16,10 +16,10 @@ namespace TodoListAPIs.Models.Dtos
         [Required]
         public string Description { get; set; }
         [Required]
-        public DateTime CreatedDate { get; set; }
+        public String CreatedDate { get; set; }
         [Required]
 
-        public DateTime DueDate { get; set; }
+        public String DueDate { get; set; }
         [Required]
 
         public string Priority { get; set; }
@@ -27,6 +27,6 @@ namespace TodoListAPIs.Models.Dtos
         public Guid MainListId{ get; set; }
         public MainList MainList { get; set; }
         public bool Status { get; set; }
-        public bool pending { get; internal set; }
+      
     }
 }

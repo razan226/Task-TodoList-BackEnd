@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TodoListAPIs.DAL.Repositories;
+using TodoListAPIs.Models.Dtos;
 
 namespace TodoListAPIs
 {
@@ -28,6 +30,22 @@ namespace TodoListAPIs
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region  Dependency injection 
+            services.AddScoped<IMainListRepository, MainListRepository>();
+            services.AddScoped<ISubListRepository, SubListRepository>();
+
+            #endregion
+            #region Mapper 
+            var config = new AutoMapper.MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<MainList, MainListData>().ReverseMap();
+                cfg.CreateMap<SubList, SubListData>().ReverseMap();
+
+
+            });
+            var mapper = config.CreateMapper();
+            services.AddSingleton(mapper);
+            #endregion
             #region DataBase
 
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -37,7 +55,20 @@ namespace TodoListAPIs
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TodoListAPIs", Version = "v1" });
             });
+            #region CORS
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin();
+                        builder.AllowAnyMethod();
+                        builder.AllowAnyHeader();
+                    });
+            });
+            #endregion
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -54,6 +85,13 @@ namespace TodoListAPIs
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseCors(builder =>
+            {
+                builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            });
 
             app.UseEndpoints(endpoints =>
             {

@@ -9,7 +9,7 @@ using TodoListAPIs.Models.Dtos;
 
 namespace TodoListAPIs.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/subList")]
     [ApiController]
     public class SubListController : ControllerBase
     {
@@ -44,7 +44,7 @@ namespace TodoListAPIs.Controllers
         }
 
         [SwaggerOperation(Summary = "Get SubList")]
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<List<SubListData>>> GetSubList(Guid id)
         {
             try
@@ -64,9 +64,32 @@ namespace TodoListAPIs.Controllers
             }
         }
 
+
+        [SwaggerOperation(Summary = "Get SubList By MainList Id")]
+        [HttpGet("mainList/{id}")]
+        public async Task<ActionResult<List<SubListData>>> GetGetSubListByMainListId(Guid id)
+        {
+            try
+            {
+                return Ok(await _SubListRepository.GetSubListByMainListId(id));
+
+            }
+            catch (NullReferenceException e)
+            {
+                return NotFound(e.Message + "Inner Ex: " + e.InnerException.Message);
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message + "Inner Ex: " + e.InnerException.Message);
+
+            }
+        }
+
+
         [SwaggerOperation(Summary = "Create new SubList")]
         [HttpPost]
-        public async Task<ActionResult<SubListData>> PostItem(SubListData SubListData)
+        public async Task<ActionResult<SubListData>> PostSubList(SubListData SubListData)
         {
             try
             {
@@ -94,7 +117,7 @@ namespace TodoListAPIs.Controllers
         {
             try
             {
-                await _SubListRepository.DeleteSublist(id);
+                await _SubListRepository.DeleteSubList(id);
                 return Ok("Deleted Sucsessfully");
 
             }

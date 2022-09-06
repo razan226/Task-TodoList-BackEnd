@@ -15,8 +15,11 @@ namespace TodoListAPIs.DAL.Repositories
 
         Task<SubListData> CreateSubList(SubListData SubData);
         Task<List<SubListData>> GetSubLists();
-        Task DeleteSublist(Guid id);
+        
         Task<SubListData> GetSubListById(Guid id);
+        Task<List<SubListData>> GetSubListByMainListId(Guid id);
+        Task DeleteSubList(Guid id);
+
     }
     public class SubListRepository : ISubListRepository
     {
@@ -40,11 +43,12 @@ namespace TodoListAPIs.DAL.Repositories
             try
             {
 
-                var List = _mapper.Map<SubList>(SubListData);
+                var SubList = _mapper.Map<SubList>(SubListData);
+                SubList.Status = true;
 
-                _appDbContext.SubLists.Add(List);
+                _appDbContext.SubLists.Add(SubList);
                 await _appDbContext.SaveChangesAsync();
-                return _mapper.Map<SubListData>(List);
+                return _mapper.Map<SubListData>(SubList);
             }
             catch
             {
@@ -55,13 +59,32 @@ namespace TodoListAPIs.DAL.Repositories
         {
             try
             {
-                var activeItems = await _appDbContext.SubLists.Where(s => s.Status == true && s.pending != true).ToListAsync();
-                return _mapper.Map<List<SubListData>>(activeItems);
+                var SubList = await _appDbContext.SubLists.Where(s => s.Status == true ).ToListAsync();
+                return _mapper.Map<List<SubListData>>(SubList);
             }
             catch
             {
                 throw;
             }
+        }
+        public async Task<List<SubListData>> GetSubListByMainListId(Guid id)
+        {
+            try
+            {
+
+                var SubList = await _appDbContext.SubLists.Where(s => s.MainListId== id && s.Status == true).ToListAsync();
+
+                if (SubList == null)
+                {
+                    throw new NullReferenceException("SubList with id=" + id + " is not found");
+                }
+                return _mapper.Map<List<SubListData>>(SubList);
+            }
+            catch
+            {
+                throw;
+            }
+
         }
 
         public async Task DeleteSubList(Guid id)
@@ -99,7 +122,7 @@ namespace TodoListAPIs.DAL.Repositories
 
                 if (SubList == null)
                 {
-                    throw new NullReferenceException("AubList with id=" + id + " is not found");
+                    throw new NullReferenceException("SubList with id=" + id + " is not found");
                 }
                 return _mapper.Map<SubListData>(SubList);
             }
@@ -110,12 +133,9 @@ namespace TodoListAPIs.DAL.Repositories
         }
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _appDbContext.Dispose();
         }
 
-        Task ISubListRepository.DeleteSublist(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

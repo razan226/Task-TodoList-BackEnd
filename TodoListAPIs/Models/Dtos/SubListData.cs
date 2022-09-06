@@ -14,9 +14,9 @@ namespace TodoListAPIs.Models.Dtos
 
         [Required(ErrorMessage = "Description is required")]
         public string Description { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public String CreatedDate { get; set; }
         [Required(ErrorMessage = "DueDate is required")]
-        public DateTime DueDate { get; set; }
+        public String DueDate { get; set; }
         [Required(ErrorMessage = "Priority is required")]
         public string Priority { get; set; }
 

@@ -13,6 +13,6 @@ namespace TodoListAPIs.Models.Dtos
         [Required]
         public string Name { get; set; }
         public bool Status { get; set; }
-        public bool pending { get; internal set; }
+
     }
 }

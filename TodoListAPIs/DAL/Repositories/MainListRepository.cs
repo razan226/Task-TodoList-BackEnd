@@ -40,11 +40,12 @@ namespace TodoListAPIs.DAL.Repositories
 
             try
             {
-                var List = _mapper.Map<MainList>(MainListData);
+                var MainList = _mapper.Map<MainList>(MainListData);
+                MainList.Status = true;
 
-                _appDbContext.MainLists.Add(List);
+                _appDbContext.MainLists.Add(MainList);
                 await _appDbContext.SaveChangesAsync();
-                return _mapper.Map<MainListData>(List);
+                return _mapper.Map<MainListData>(MainList);
             }
             catch
             {
@@ -55,7 +56,7 @@ namespace TodoListAPIs.DAL.Repositories
         {
             try
             {
-                var activeItems = await _appDbContext.MainLists.Where(m => m.Status == true && m.pending != true).ToListAsync();
+                var activeItems = await _appDbContext.MainLists.Where(m => m.Status == true ).ToListAsync();
                 return _mapper.Map<List<MainListData>>(activeItems);
             }
             catch
